@@ -1,0 +1,70 @@
+---
+title: "Milestone Report - Brian Burnham"
+author: "Brian Burnham"
+date: "12/7/2017"
+output: html_document
+---
+
+## Milestone Report - Coursera Data Science Capstone
+
+### Brian Burnham, 12/7/2017
+
+## Obtaining the Data
+
+First we're going to download, unzip and read in three files from the english set. This code will check first for a downloaded file to prevent a time cosuming download. We'll then read in the files into objects. 
+
+```{r, message=FALSE, warning=FALSE}
+
+if (!file.exists("Coursera-SwiftKey.zip")) {
+  download.file("https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip","Coursera-SwiftKey.zip")
+  unzip("Coursera-SwiftKey.zip")
+}
+
+blogs <- readLines("final/en_US/en_US.blogs.txt", skipNul=TRUE) 
+news <- readLines("final/en_US/en_US.news.txt", skipNul =TRUE) 
+twitter <- readLines("final/en_US/en_US.twitter.txt", skipNul=TRUE) 
+
+```
+
+## Observations: word and line count
+
+We'll use the *stri_count_words* function to summarize each row as a sum of the number of words. With the detail data we can then use *length* to quickly count the rows we have left.
+
+```{r, message=FALSE, warning=FALSE}
+library(stringi)
+blogs_detail <- stri_count_words(blogs)
+news_detail <- stri_count_words(news)
+twitter_detail <- stri_count_words(twitter)
+
+blogs_summary <- c(sum(blogs_detail),length(blogs_detail))
+news_summary <- c(sum(news_detail),length(news_detail))
+twitter_summary <- c(sum(twitter_detail),length(twitter_detail))
+
+```
+
+Now we know that we have **`r blogs_summary[1]`** words in blogs, **`r news_summary[1]`** in news and **`r twitter_summary[1]`** in twitter. There are **`r blogs_summary[2]`** rows in blogs, **`r news_summary[2]`** rows in news and **`r twitter_summary[2]`**
+
+
+## Visualizing the dataset
+
+Let's look at the shape of the data sources by visualizing them. 
+
+In the histograms below you'll notice that the Blogs and News show a very high frequency of lines with a few words offset dramatically by lines with a thousand or more words. This could skew a sample if we were to choose random lines. We also see that as expected, the lines of Twitter data tend to be short asn enforced by the mediums charactor limit. 
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+
+qplot(blogs_detail,geom="histogram",main="Blogs",xlab="Words per line",ylab="Frequency")
+
+qplot(news_detail,geom="histogram",main="News",xlab="Words per line",ylab="Frequency")
+
+qplot(twitter_detail,geom="histogram",main="Twitter",xlab="Words per line",ylab="Frequency")
+
+```
+
+## Next Steps
+
+We have determined that we have a significant set of valid data for our project. Our next step will be to clean and transform these bodies of text into a corpus we can analyze by ngram. We will then use these ngrams to predict next words. 
+
+
+
